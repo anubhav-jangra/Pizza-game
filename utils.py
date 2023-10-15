@@ -22,14 +22,14 @@ class pizza_calculations():
             #Try to fix if theta is 0
             random_pref = np.array(self.ratio_calculator(pizzas[pizza_id], [x, y, self.rng.random()*2*np.pi], num_toppings, multiplier, x, y))
             required_pref = np.array(preferences[i])
-            uniform_pref = np.ones((2, num_toppings))*(1/num_toppings)
-            b = np.absolute(required_pref - uniform_pref).sum()
-            c = np.absolute(obtained_pref - required_pref).sum()
-            u = np.absolute(random_pref - uniform_pref).sum()
+            uniform_pref = np.ones((2, num_toppings))*(12/num_toppings)
+            b = np.round(np.absolute(required_pref - uniform_pref), 3)
+            c = np.round(np.absolute(obtained_pref - required_pref), 3)
+            u = np.round(np.absolute(random_pref - uniform_pref), 3)
             B.append(b)
             C.append(c)
             U.append(u)
-            obtained_preferences.append(obtained_pref)
+            obtained_preferences.append(np.round(obtained_pref, 3))
         return B, C, U, obtained_preferences
 
 
@@ -75,14 +75,9 @@ class pizza_calculations():
                     result[1][int(topping_i[2]) - 1] = result[1][int(topping_i[2]) - 1] + (np.pi*0.375*0.375)
                 else:
                     result[0][int(topping_i[2]) - 1] = result[0][int(topping_i[2]) - 1] + (np.pi*0.375*0.375)
-        sum_0 = 0
-        sum_1 = 0
         for i in range(num_toppings):
-            sum_0 = sum_0 +result[0][i]
-            sum_1 = sum_1 +result[1][i]
-        for i in range(num_toppings):
-            result[0][i] = result[0][i]/sum_0
-            result[1][i] = result[1][i]/sum_1
+            result[0][i] = result[0][i]/(np.pi*0.375*0.375)
+            result[1][i] = result[1][i]/(np.pi*0.375*0.375)
         return result
                     
 
