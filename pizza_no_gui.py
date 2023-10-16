@@ -91,8 +91,11 @@ class no_gui():
 
     def see_score(self):
         B, C, U, obtained_preferences = self.calculator.final_score(self.pizzas, self.pizza_choice_order, self.preferences, self.cuts, self.num_toppings, self.multiplier, self.x, self.y)
-        list_scores = [('Customer Number', "Pizza Number", "U", "B", "C", "S (Score)")]
         with open("summary_log_nogui.txt", "w") as f:
+            U_total = 0
+            B_total = 0
+            C_total = 0
+            S_total = 0
             for i in range(len(self.pizzas)):
                 pizza_id = self.pizza_choice_order[i]
                 f.write('\n')
@@ -108,28 +111,42 @@ class no_gui():
                     f.write('\n')
                 f.write("U : " + str(U[i]))
                 f.write('\n')
+                f.write("Total : " + str(U[i].sum()))
+                f.write('\n')
+                U_total = U_total + U[i].sum()
                 f.write("B : " + str(B[i]))
                 f.write('\n')
+                f.write("Total : " + str(B[i].sum()))
+                f.write('\n')
+                B_total = B_total + B[i].sum()
                 f.write("C : " + str(C[i]))
                 f.write('\n')
-                f.write("S : " + str(B[i] - C[i]))
+                f.write("Total : " + str(C[i].sum()))
                 f.write('\n')
+                C_total = C_total + C[i].sum()
+                f.write("S : " + str((B[i] - C[i])))
+                f.write('\n')
+                f.write("Total : " + str((B[i] - C[i]).sum()))
+                f.write('\n')
+                S_total = S_total + (B[i] - C[i]).sum()
                 f.write("Desired Preferences : " + str(self.preferences[i]))
                 f.write('\n')
                 f.write("Obtained Preferences : " + str(obtained_preferences[i]))
                 f.write('\n')
                 f.write('\n')
                 f.write('\n')
-                print((str(i+1), str(pizza_id), str(U[i]), str(B[i]), str(C[i]), str(B[i] - C[i])))
-            f.write("Total Score U : " + str(np.array(U).sum()))
+                print(f"Customer {str(i+1)}, pizza {str(pizza_id)}, U = {str(np.round(U[i].sum(), 2))}, B = {str(np.round(B[i].sum(), 2))}, C = {str(np.round(C[i].sum(), 2 ))}, S = {str(np.round((np.sum(B[i], axis = 1) - np.sum(C[i], axis = 1)).sum(), 2))}")
+            f.write("Total Score U : " + str(U_total))
+            print("Total Score U : " + str(U_total))
             f.write('\n')
-            f.write("Total score B : " + str(np.array(B).sum()))
+            f.write("Total score B : " + str(B_total))
+            print("Total score B : " + str(B_total))
             f.write('\n')
-            f.write("Total score C : " + str(np.array(C).sum()))
+            f.write("Total score C : " + str(C_total))
+            print("Total score C : " + str(C_total))
             f.write('\n')
-            f.write("Total score S : " + str((np.array(B)-np.array(C)).sum()))
-            f.write('\n')
-            f.write("Total score S : " + str((np.array(B)-np.array(C)).sum()))
+            f.write("Total score S : " + str(S_total))
+            print("Total score S : " + str(S_total))
             f.write('\n')
             f.write('\n')
 

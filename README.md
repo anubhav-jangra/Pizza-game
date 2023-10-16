@@ -44,7 +44,7 @@ pip install -r requirements.txt
 Here is a sample of what your command could look like with all arguments. You can also run it without any command line arguments, in which case the default values of arguments will be used.
 
 ```bash
-python main.py -g True -sz 40 -s 30 -s100 50 -s10 50 -a_num 0 -g_num 0 
+python main.py -g True -sz 40 -s 30 -s100 50 -s10 50 -g_num 0 
 ```
 
 ### Running without Simulator

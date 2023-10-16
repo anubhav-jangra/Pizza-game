@@ -1,4 +1,5 @@
 
+from random import uniform
 import tkinter as Tkinter
 import numpy as np
 from tkinter import *
@@ -52,7 +53,7 @@ class gui():
         self.calculator = pizza_calculations()
 
         #replace with arguments
-        self.autoplayer_number = args.autoplayer_number
+        #self.autoplayer_number = args.autoplayer_number
         self.generator_number = args.generator_number
         self.multiplier = args.interface_size #(default 40)
         self.rng_generator_100 = np.random.default_rng(int(args.gen_100_seed))
@@ -297,10 +298,9 @@ class gui():
         self.num_player = self.options_player.index(self.type_player) - 1
         self.num_toppings = int(self.num_p.get())
         self.all_player_instances = [ default_player(self.num_toppings, self.rng), p1(self.num_toppings, self.rng), p2(self.num_toppings, self.rng), p3(self.num_toppings, self.rng), p4(self.num_toppings, self.rng), p5(self.num_toppings, self.rng), p6(self.num_toppings, self.rng)]
-        self.auto_player = default_player(self.num_toppings, self.rng)
         #self.preferences = np.zeros((constants.number_of_initial_pizzas, 2, self.num_toppings))
         self.preferences = self.all_player_instances[self.generator_number].customer_gen(10, self.rng_generator_10)
-        self.initialise_player(self.num_player, self.autoplayer_number)
+        self.initialise_player(self.num_player, self.num_player)
         if self.type_player != "custom_player":
             #self.pizzas = self.player.create_pizzas(self.num_toppings)      #This line should come in other pizza_game.py. There te self gets updated and transferred here.
             self.button.destroy()
@@ -418,6 +418,10 @@ class gui():
         B, C, U, obtained_preferences = self.calculator.final_score(self.pizzas, self.pizza_choice_order, self.preferences, self.cuts, self.num_toppings, self.multiplier, self.x, self.y)
         list_scores = [('Customer Number', "Pizza Number", "U", "B", "C", "S (Score)")]
         with open("summary_log_gui.txt", "w") as f:
+            U_total = 0
+            B_total = 0
+            C_total = 0
+            S_total = 0
             for i in range(len(self.pizzas)):
                 pizza_id = self.pizza_choice_order[i]
                 f.write('\n')
@@ -435,34 +439,37 @@ class gui():
                 f.write('\n')
                 f.write("Total : " + str(U[i].sum()))
                 f.write('\n')
+                U_total = U_total + U[i].sum()
                 f.write("B : " + str(B[i]))
                 f.write('\n')
                 f.write("Total : " + str(B[i].sum()))
                 f.write('\n')
+                B_total = B_total + B[i].sum()
                 f.write("C : " + str(C[i]))
                 f.write('\n')
                 f.write("Total : " + str(C[i].sum()))
                 f.write('\n')
-                f.write("S : " + str(np.absolute(B[i] - C[i])))
+                C_total = C_total + C[i].sum()
+                f.write("S : " + str((B[i] - C[i])))
                 f.write('\n')
-                f.write("Total : " + str(np.absolute(B[i] - C[i]).sum()))
+                f.write("Total : " + str((B[i] - C[i]).sum()))
                 f.write('\n')
+                S_total = S_total + (B[i] - C[i]).sum()
                 f.write("Desired Preferences : " + str(self.preferences[i]))
                 f.write('\n')
                 f.write("Obtained Preferences : " + str(obtained_preferences[i]))
                 f.write('\n')
                 f.write('\n')
                 f.write('\n')
-                list_scores.append((str(i+1), str(pizza_id), str(np.round(U[i].sum(), 2)), str(np.round(B[i].sum(), 2)), str(np.round(C[i].sum(), 2 )), str(np.round(np.absolute(B[i] - C[i]).sum(), 2))))
-            f.write("Total Score U : " + str(np.array(U).sum()))
+                #list_scores.append((str(i+1), str(pizza_id), str(np.round(U[i].sum(), 2)), str(np.round(B[i].sum(), 2)), str(np.round(C[i].sum(), 2 )), str(np.round((B[i] - C[i]).sum(), 2))))
+                list_scores.append((str(i+1), str(pizza_id), str(np.round(U[i].sum(), 2)), str(np.round(B[i].sum(), 2)), str(np.round(C[i].sum(), 2 )), str(np.round((np.sum(B[i], axis = 1) - np.sum(C[i], axis = 1)).sum(), 2))))
+            f.write("Total Score U : " + str(U_total))
             f.write('\n')
-            f.write("Total score B : " + str(np.array(B).sum()))
+            f.write("Total score B : " + str(B_total))
             f.write('\n')
-            f.write("Total score C : " + str(np.array(C).sum()))
+            f.write("Total score C : " + str(C_total))
             f.write('\n')
-            f.write("Total score S : " + str(np.absolute(np.array(B)-np.array(C)).sum()))
-            f.write('\n')
-            f.write("Total score S : " + str(np.absolute(np.array(B)-np.array(C)).sum()))
+            f.write("Total score S : " + str(S_total))
             f.write('\n')
             f.write('\n')
         

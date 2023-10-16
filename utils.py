@@ -33,7 +33,6 @@ class pizza_calculations():
         return B, C, U, obtained_preferences
 
 
-
     
     def ratio_calculator(self, pizza, cut_1, num_toppings, multiplier, x, y):
         cut = copy.deepcopy(cut_1)
