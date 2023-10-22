@@ -20,7 +20,7 @@ class Player:
                 preferences_2 = preferences_2/np.sum(preferences_2)
                 preferences = [preferences_1, preferences_2]
                 equal_prob = self.rng.random()
-                if equal_prob <= 0.3:
+                if equal_prob <= 0.0:
                     preferences = (np.ones((2,self.num_toppings))*12/self.num_toppings).tolist()
                 preferences_total.append(preferences)
         else : 
@@ -31,7 +31,7 @@ class Player:
                 preferences_2 = 12*preferences_2/np.sum(preferences_2)
                 preferences = [preferences_1, preferences_2]
                 equal_prob = rng.random()
-                if equal_prob <= 0.3:
+                if equal_prob <= 0.0:       #change this if you want toppings to show up
                     preferences = (np.ones((2,self.num_toppings))*12/self.num_toppings).tolist()
                 preferences_total.append(preferences) 
         return preferences_total

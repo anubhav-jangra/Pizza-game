@@ -157,12 +157,18 @@ class gui():
         self.pizza_number_choice.destroy()
         x_coord = event.x
         y_coord = event.y
-        self.cuts[self.pizza_id][0] = x_coord
-        self.cuts[self.pizza_id][1] = y_coord
-        self.click_indic = self.click_indic + 1
-        self.canvas.create_oval(x_coord - (0.1*self.multiplier), y_coord - (0.1*self.multiplier), x_coord + (0.1*self.multiplier), y_coord + (0.1*self.multiplier), fill = "black")
-        self.canvas.unbind("<Button-1>")
-        self.canvas.bind("<Button-1>", self.clickevent_cut)
+        if (x_coord-self.x)**2 + (y_coord-self.y)**2 > (6*self.multiplier)**2 :
+            self.label.config( text = "Invalid placement. Try again.")
+            self.canvas.unbind("<Button-1>")
+            self.choose_cuts()
+        else:
+            self.cuts[self.pizza_id][0] = x_coord
+            self.cuts[self.pizza_id][1] = y_coord
+            self.click_indic = self.click_indic + 1
+            self.label.config( text = "You chose your center!")
+            self.canvas.create_oval(x_coord - (0.1*self.multiplier), y_coord - (0.1*self.multiplier), x_coord + (0.1*self.multiplier), y_coord + (0.1*self.multiplier), fill = "black")
+            self.canvas.unbind("<Button-1>")
+            self.canvas.bind("<Button-1>", self.clickevent_cut)
 
     def clickevent_cut(self, event):
         x_coord = event.x

@@ -1,3 +1,4 @@
+from turtle import distance
 import numpy as np
 import constants
 import copy
@@ -54,29 +55,84 @@ class pizza_calculations():
             topping_i[2] = int(topping_i[2])
         
             theta_distance = (theta_top - theta + (np.pi * 10))%(2*np.pi)
-            if (theta_edge + theta_distance)*4//np.pi   ==  (-theta_edge + theta_distance)*4//np.pi:
+
+            if distance_to_top <= 0.375:                                                                    #Chosen center is withing pizza topping. Then by pizza theorem, 2 equal sized topping pieces
+                result[1][int(topping_i[2]) - 1] = result[1][int(topping_i[2]) - 1] + (np.pi*0.375*0.375/2)
+                result[0][int(topping_i[2]) - 1] = result[0][int(topping_i[2]) - 1] + (np.pi*0.375*0.375/2)
+            
+            elif (theta_edge + theta_distance)*4//np.pi   ==  (-theta_edge + theta_distance)*4//np.pi:
                 if (theta_distance*4//np.pi) %2 == 0:
                     result[1][int(topping_i[2]) - 1] = result[1][int(topping_i[2]) - 1] + (np.pi*0.375*0.375)
                 else:
                     result[0][int(topping_i[2]) - 1] = result[0][int(topping_i[2]) - 1] + (np.pi*0.375*0.375)
-            elif (theta_edge + theta_distance)*4//np.pi ==  (-theta_edge + theta_distance)*4//np.pi + 1:
+            
+            elif (theta_edge + theta_distance)*4//np.pi ==  (-theta_edge + theta_distance)*4//np.pi + 1:    #Topping falls in 2 slices
                 if (theta_distance*4//np.pi) %2 == 0:
-                    small_angle_theta = min(theta_distance%(np.pi/4), ((30*np.pi)-theta_distance)%(np.pi/4))
+                    small_angle_theta = min(theta_distance%(np.pi/4), (np.pi/4 - (theta_distance%(np.pi/4))))
                     phi = np.arcsin(distance_to_top*np.sin(small_angle_theta)/0.375)
                     area_smaller = (np.pi/2 - phi - (np.cos(phi)*np.sin(phi)))*0.375*0.375
                     result[1][int(topping_i[2]) - 1] = result[1][int(topping_i[2]) - 1] + (np.pi*0.375*0.375) - area_smaller
                     result[0][int(topping_i[2]) - 1] = result[0][int(topping_i[2]) - 1] + area_smaller
                 else:
-                    small_angle_theta = min(theta_distance%(np.pi/4), ((30*np.pi)-theta_distance)%(np.pi/4))
+                    small_angle_theta = min(theta_distance%(np.pi/4), (np.pi/4 - (theta_distance%(np.pi/4))))
                     phi = np.arcsin(distance_to_top*np.sin(small_angle_theta)/0.375)
                     area_smaller = (np.pi/2 - phi - (np.cos(phi)*np.sin(phi)))*0.375*0.375
                     result[1][int(topping_i[2]) - 1] = result[1][int(topping_i[2]) - 1] + area_smaller
                     result[0][int(topping_i[2]) - 1] = result[0][int(topping_i[2]) - 1] + (np.pi*0.375*0.375) - area_smaller
-            else:      #If the topping falls in 3 or more regions. Honestly, this probability is so small (Likely one topping at max for a general distribution) that I am assuming the entire area in the maximum sector
+            
+            
+            
+            elif (theta_edge + theta_distance)*4//np.pi ==  (-theta_edge + theta_distance)*4//np.pi + 2:    #Topping falls in 3 slices
+                small_angle_theta_1 = theta_distance%(np.pi/4)
+                small_angle_theta_2 = (np.pi/4)-small_angle_theta_1
+                phi_1 = np.arcsin(distance_to_top*np.sin(small_angle_theta_1)/0.375)
+                phi_2 = np.arcsin(distance_to_top*np.sin(small_angle_theta_2)/0.375)
+                area_smaller_1 = (np.pi/2 - phi_1 - (np.cos(phi_1)*np.sin(phi_1)))*0.375*0.375
+                area_smaller_2 = (np.pi/2 - phi_2 - (np.cos(phi_2)*np.sin(phi_2)))*0.375*0.375
                 if (theta_distance*4//np.pi) %2 == 0:
-                    result[1][int(topping_i[2]) - 1] = result[1][int(topping_i[2]) - 1] + (np.pi*0.375*0.375)
+                    result[1][int(topping_i[2]) - 1] = result[1][int(topping_i[2]) - 1] + (np.pi*0.375*0.375) - area_smaller_1 - area_smaller_2
+                    result[0][int(topping_i[2]) - 1] = result[0][int(topping_i[2]) - 1] + area_smaller_1 + area_smaller_2
                 else:
-                    result[0][int(topping_i[2]) - 1] = result[0][int(topping_i[2]) - 1] + (np.pi*0.375*0.375)
+                    result[1][int(topping_i[2]) - 1] = result[1][int(topping_i[2]) - 1] + area_smaller_1 + area_smaller_2
+                    result[0][int(topping_i[2]) - 1] = result[0][int(topping_i[2]) - 1] + (np.pi*0.375*0.375) - area_smaller_1 - area_smaller_2
+            
+            
+            else:       #just see the pattern from the above 2, draw some diagrams and you'll see how this came. Find areas of all small sectors, then minus accordingly later. This also takes care of the
+                # above conditions. It's a general case, but let's have everything here because why not
+                small_angle_theta = theta_distance%(np.pi/4)
+                small_areas_1 = []
+                small_areas_2 = []
+                while small_angle_theta<theta_edge:
+                    phi = np.arcsin(distance_to_top*np.sin(small_angle_theta)/0.375)
+                    area_smaller = (np.pi/2 - phi - (np.cos(phi)*np.sin(phi)))*0.375*0.375
+                    small_areas_1.append(area_smaller)
+                    small_angle_theta = small_angle_theta + (np.pi/4)
+                for i in range(len(small_areas_1)-1):
+                    small_areas_1[i] = small_areas_1[i] - small_areas_1[i+1]
+                
+                small_angle_theta = np.pi/4 - (theta_distance%(np.pi/4))
+                while small_angle_theta<theta_edge:
+                    phi = np.arcsin(distance_to_top*np.sin(small_angle_theta)/0.375)
+                    area_smaller = (np.pi/2 - phi - (np.cos(phi)*np.sin(phi)))*0.375*0.375
+                    small_areas_2.append(area_smaller)
+                    small_angle_theta = small_angle_theta + (np.pi/4)
+                for i in range(len(small_areas_2)-1):
+                    small_areas_2[i] = small_areas_2[i] - small_areas_2[i+1]
+
+                area_center = (np.pi*0.375*0.375) - np.sum(small_areas_1) - np.sum(small_areas_2)       #area of topping in slice where it's center lies.
+                for i in range(len(small_areas_1)):
+                    if i%2 == 1:
+                        area_center = area_center + small_areas_1[i]
+                for i in range(len(small_areas_2)):
+                    if i%2 == 1:
+                        area_center = area_center + small_areas_2[i]
+                if (theta_distance*4//np.pi) %2 == 0:
+                    result[1][int(topping_i[2]) - 1] = result[1][int(topping_i[2]) - 1] + area_center
+                    result[0][int(topping_i[2]) - 1] = result[0][int(topping_i[2]) - 1] + (np.pi*0.375*0.375) - area_center
+                else:
+                    result[1][int(topping_i[2]) - 1] = result[1][int(topping_i[2]) - 1] + (np.pi*0.375*0.375) - area_center
+                    result[0][int(topping_i[2]) - 1] = result[0][int(topping_i[2]) - 1] + area_center
+
         for i in range(num_toppings):
             result[0][i] = result[0][i]/(np.pi*0.375*0.375)
             result[1][i] = result[1][i]/(np.pi*0.375*0.375)
