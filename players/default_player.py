@@ -11,13 +11,24 @@ class Player:
         self.num_toppings = num_toppings
 
     def customer_gen(self, num_cust, rng = None):
+        
+        """Function in which we create a distribution of customer preferences
+
+        Args:
+            num_cust(int) : the total number of customer preferences you need to create
+            rng(int) : A random seed that you can use to generate your customers. You can choose to not pass this, in that case the seed taken will be self.rng
+
+        Returns:
+            preferences_total(list) : List of size [num_cust, 2, num_toppings], having all generated customer preferences
+        """
+        
         preferences_total = []
         if rng==None:
             for i in range(num_cust):
                 preferences_1 = self.rng.random((self.num_toppings,))
-                preferences_1 = preferences_1/np.sum(preferences_1)
+                preferences_1 = 12*preferences_1/np.sum(preferences_1)
                 preferences_2 = self.rng.random((self.num_toppings,))
-                preferences_2 = preferences_2/np.sum(preferences_2)
+                preferences_2 = 12*preferences_2/np.sum(preferences_2)
                 preferences = [preferences_1, preferences_2]
                 equal_prob = self.rng.random()
                 if equal_prob <= 0.0:
@@ -36,6 +47,8 @@ class Player:
                 preferences_total.append(preferences) 
         return preferences_total
 
+        
+
 
     #def choose_discard(self, cards: list[str], constraints: list[str]):
     def choose_toppings(self, preferences):
@@ -43,10 +56,10 @@ class Player:
 
         Args:
             num_toppings(int) : the total number of different topics chosen among 2, 3 and 4
-            preferences(list) : List of size 100*2*num_toppings for 100 generated preference pairs of customers.
+            preferences(list) : List of size 100*2*num_toppings for 100 generated preference pairs(actual amounts) of customers.
 
         Returns:
-            pizzas(list) : List of size [10,24,3], where 10 is the pizza id, 24 is the topping id, innermost list of size 3 is [x coordinate of topping, y coordinate of topping, topping number of topping(1/2/3/4) (Note that it starts from 1, not 0)]
+            pizzas(list) : List of size [10,24,3], where 10 is the pizza id, 24 is the topping id, innermost list of size 3 is [x coordinate of topping center, y coordinate of topping center, topping number of topping(1/2/3/4) (Note that it starts from 1, not 0)]
         """
         
         x_coords = [np.sin(np.pi/2)]
@@ -71,13 +84,13 @@ class Player:
 
 
     #def play(self, cards: list[str], constraints: list[str], state: list[str], territory: list[int]) -> Tuple[int, str]:
-    def choose_and_cut(self, pizzas, remaining_pizza_ids, customer_ratios):
+    def choose_and_cut(self, pizzas, remaining_pizza_ids, customer_amounts):
         """Function which based n current game state returns the distance and angle, the shot must be played
 
         Args:
             pizzas (list): List of size [10,24,3], where 10 is the pizza id, 24 is the topping id, innermost list of size 3 is [x coordinate of topping, y coordinate of topping, topping number of topping(1/2/3/4)]
             remaining_pizza_ids (list): A list of remaining pizza's ids
-            ratio (list): The ratio in which the customer wants their pizza
+            customer_amounts (list): The amounts in which the customer wants their pizza
 
         Returns:
             Tuple[int, center, first cut angle]: Return the pizza id you choose, the center of the cut in format [x_coord, y_coord] where both are in inches relative of pizza center of radius 6, the angle of the first cut in radians. 
