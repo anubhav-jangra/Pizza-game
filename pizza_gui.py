@@ -54,8 +54,8 @@ class gui():
 
         #replace with arguments
         #self.autoplayer_number = args.autoplayer_number
-        self.generator_number = args.generator_number
-        self.multiplier = args.interface_size #(default 40)
+        self.generator_number = int(args.generator_number)
+        self.multiplier = int(args.interface_size) #(default 40)
         self.rng_generator_100 = np.random.default_rng(int(args.gen_100_seed))
         self.rng_generator_10 = np.random.default_rng(int(args.gen_10_seed))
 

@@ -47,6 +47,7 @@ class pizza_calculations():
             top_abs_y = topping_i[1]
             distance_to_top = np.sqrt((top_abs_x-center[0])**2 + (top_abs_y - center[1])**2)
             theta_edge = np.arctan(0.375 / distance_to_top)
+            
             if top_abs_x == center[0]:
                 theta_top = 0
             else:
