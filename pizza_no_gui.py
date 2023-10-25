@@ -45,7 +45,7 @@ class no_gui():
         self.calculator = pizza_calculations()
 
         #replace with arguments
-        self.autoplayer_number = args.autoplayer_number
+        #self.autoplayer_number = args.autoplayer_number
         self.generator_number = args.generator_number
         self.multiplier = args.interface_size #(default 40)
         self.rng_generator_100 = np.random.default_rng(int(args.gen_100_seed))
@@ -155,7 +155,7 @@ class no_gui():
         self.num_toppings = self.num_toppings_nogui
         self.all_player_instances = [ default_player(self.num_toppings, self.rng), p1(self.num_toppings, self.rng), p2(self.num_toppings, self.rng), p3(self.num_toppings, self.rng), p4(self.num_toppings, self.rng), p5(self.num_toppings, self.rng), p6(self.num_toppings, self.rng)]
         self.preferences = self.all_player_instances[self.generator_number].customer_gen(10, self.rng_generator_10)
-        self.initialise_player(self.num_player, self.autoplayer_number)
+        self.initialise_player(self.num_player, self.num_player)
         self.pizzas = self.player_instance.choose_toppings(self.all_player_instances[self.generator_number].customer_gen(100, self.rng_generator_100))
         self.pizzas_drawn = constants.number_of_initial_pizzas
         clash_exists_overall = False
