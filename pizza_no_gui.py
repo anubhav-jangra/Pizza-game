@@ -46,12 +46,12 @@ class no_gui():
 
         #replace with arguments
         #self.autoplayer_number = args.autoplayer_number
-        self.generator_number = args.generator_number
-        self.multiplier = args.interface_size #(default 40)
+        self.generator_number = int(args.generator_number)
+        self.multiplier = int(args.interface_size #(default 40))
         self.rng_generator_100 = np.random.default_rng(int(args.gen_100_seed))
         self.rng_generator_10 = np.random.default_rng(int(args.gen_10_seed))
-        self.player_nogui = args.player
-        self.num_toppings_nogui = args.num_toppings
+        self.player_nogui = int(args.player)
+        self.num_toppings_nogui = int(args.num_toppings)
 
     def initialise_player(self, player_px, autoplayer) :
             #setting player
