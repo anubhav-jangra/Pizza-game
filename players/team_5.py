@@ -22,7 +22,6 @@ class Player:
             preferences_total(list) : List of size [num_cust, 2, num_toppings], having all generated customer preferences
         """
         rng_today = rng if rng else self.rng
-        preferences_total = list()
         
         def get_person_preferences():
             prefs = list()
@@ -34,10 +33,7 @@ class Player:
             prefs.append(remains)
             return np.array(prefs)
 
-        for i in range(num_cust):
-            preferences = [get_person_preferences() for i in range(2)]
-            preferences_total.append(preferences)
-        return preferences_total
+        return [[get_person_preferences() for i in range(2)] for j in range(num_cust)]
 
 
     #def choose_discard(self, cards: list[str], constraints: list[str]):
