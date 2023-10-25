@@ -31,7 +31,9 @@ class Player:
                 prefs.append(remains*p)
                 remains *= (1-p)
             prefs.append(remains)
-            return np.array(prefs)
+            prefs = np.array(prefs)
+            rng_today.shuffle(prefs)
+            return prefs
 
         return [[get_person_preferences() for i in range(2)] for j in range(num_cust)]
 
