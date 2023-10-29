@@ -9,6 +9,7 @@ class Player:
         """Initialise the player"""
         self.rng = rng
         self.num_toppings = num_toppings
+        print("This is team 2.")
 
     def customer_gen(self, num_cust, rng = None):
         
