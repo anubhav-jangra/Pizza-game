@@ -10,44 +10,78 @@ class Player:
         self.rng = rng
         self.num_toppings = num_toppings
 
-    def customer_gen(self, num_cust, rng = None):
+    # def customer_gen(self, num_cust, rng = None):
         
-        """Function in which we create a distribution of customer preferences
+    #     """Function in which we create a distribution of customer preferences
+
+    #     Args:
+    #         num_cust(int) : the total number of customer preferences you need to create
+    #         rng(int) : A random seed that you can use to generate your customers. You can choose to not pass this, in that case the seed taken will be self.rng
+
+    #     Returns:
+    #         preferences_total(list) : List of size [num_cust, 2, num_toppings], having all generated customer preferences
+    #     """
+    #     preferences_total = []
+    #     if rng==None:
+    #         for i in range(num_cust):
+    #             preferences_1 = self.rng.random((self.num_toppings,))
+    #             preferences_1 = 12*preferences_1/np.sum(preferences_1)
+    #             preferences_2 = self.rng.random((self.num_toppings,))
+    #             preferences_2 = 12*preferences_2/np.sum(preferences_2)
+    #             preferences = [preferences_1, preferences_2]
+    #             equal_prob = self.rng.random()
+    #             if equal_prob <= 0.0:
+    #                 preferences = (np.ones((2,self.num_toppings))*12/self.num_toppings).tolist()
+    #             preferences_total.append(preferences)
+    #     else : 
+    #         for i in range(num_cust):
+    #             preferences_1 = rng.random((self.num_toppings,))
+    #             preferences_1 = 12*preferences_1/np.sum(preferences_1)
+    #             preferences_2 = rng.random((self.num_toppings,))
+    #             preferences_2 = 12*preferences_2/np.sum(preferences_2)
+    #             preferences = [preferences_1, preferences_2]
+    #             equal_prob = rng.random()
+    #             if equal_prob <= 0.0:       #change this if you want toppings to show up
+    #                 preferences = (np.ones((2,self.num_toppings))*12/self.num_toppings).tolist()
+    #             preferences_total.append(preferences) 
+    #     return preferences_total
+
+        
+    def customer_gen(self, num_cust, rng=None, alpha=2, beta=2):
+        """
+        Function to create non-uniform customer preferences using a beta distribution.
 
         Args:
-            num_cust(int) : the total number of customer preferences you need to create
-            rng(int) : A random seed that you can use to generate your customers. You can choose to not pass this, in that case the seed taken will be self.rng
+            num_cust (int): The total number of customer preferences to create.
+            rng (int): A random seed for generating customers. If None, self.rng will be used.
+            alpha (float): Alpha parameter for the beta distribution.
+            beta (float): Beta parameter for the beta distribution.
 
         Returns:
-            preferences_total(list) : List of size [num_cust, 2, num_toppings], having all generated customer preferences
+            preferences_total (list): List of size [num_cust, 2, num_toppings], containing generated customer preferences.
         """
-        
+
         preferences_total = []
-        if rng==None:
+
+        if rng is None:
             for i in range(num_cust):
-                preferences_1 = self.rng.random((self.num_toppings,))
+                preferences_1 = self.rng.beta(alpha, beta, self.num_toppings)
                 preferences_1 = 12*preferences_1/np.sum(preferences_1)
-                preferences_2 = self.rng.random((self.num_toppings,))
+                preferences_2 = self.rng.beta(alpha, beta, self.num_toppings)
                 preferences_2 = 12*preferences_2/np.sum(preferences_2)
                 preferences = [preferences_1, preferences_2]
-                equal_prob = self.rng.random()
-                if equal_prob <= 0.0:
-                    preferences = (np.ones((2,self.num_toppings))*12/self.num_toppings).tolist()
                 preferences_total.append(preferences)
-        else : 
+        else:
             for i in range(num_cust):
-                preferences_1 = rng.random((self.num_toppings,))
+                preferences_1 = rng.beta(alpha, beta, self.num_toppings)
                 preferences_1 = 12*preferences_1/np.sum(preferences_1)
-                preferences_2 = rng.random((self.num_toppings,))
+                preferences_2 = rng.beta(alpha, beta, self.num_toppings)
                 preferences_2 = 12*preferences_2/np.sum(preferences_2)
                 preferences = [preferences_1, preferences_2]
-                equal_prob = rng.random()
-                if equal_prob <= 0.0:       #change this if you want toppings to show up
-                    preferences = (np.ones((2,self.num_toppings))*12/self.num_toppings).tolist()
-                preferences_total.append(preferences) 
+                preferences_total.append(preferences)
+
         return preferences_total
 
-        
 
 
     #def choose_discard(self, cards: list[str], constraints: list[str]):
@@ -64,7 +98,7 @@ class Player:
         
         pizzas = np.zeros((10, 24, 3))
 
-        if num_toppings == 2:
+        if self.num_toppings == 2:
             for j in range(constants.number_of_initial_pizzas):
                 pizza_indiv = np.zeros((24,3))
                 for i in range(24):
