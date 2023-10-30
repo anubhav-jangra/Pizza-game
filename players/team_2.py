@@ -40,7 +40,7 @@ class Player:
         if rng==None:
             for i in range(num_cust):
                 k = np.random.randint(-6,6)
-                print("k is:", k)
+                # print("k is:", k)
                 preferences_1 = create_inst(k)
                 preferences_2 = create_inst(k)
                 preferences = [preferences_1, preferences_2]
@@ -76,7 +76,7 @@ class Player:
                 if equal_prob <= 0.0:       #change this if you want toppings to show up
                     preferences = (np.ones((2,self.num_toppings))*12/self.num_toppings).tolist()
                 preferences_total.append(preferences)
-        print("Preference total", preferences_total)
+        # print("Preference total", preferences_total)
         return preferences_total
 
         
