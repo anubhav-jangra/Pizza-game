@@ -4,6 +4,7 @@ from typing import Tuple, List
 import constants
 from utils import pizza_calculations
 import math
+import random
 
 class Player:
     def __init__(self, num_toppings, rng: np.random.Generator) -> None:
@@ -257,7 +258,7 @@ class Player:
         random_center = self.generate_values()
         first_cut_angle = 45*np.pi/180
         center = random.choice(random_center)
-        print(first_cut_angle)
+        #print(first_cut_angle)
         
         cuts = []
         for i in range(1, 9):
@@ -266,7 +267,7 @@ class Player:
             cuts.append((x, y))
 
         # Print the coordinates of the intersections.
-        print("The set of cuts for this pizza",cuts)
+       # print("The set of cuts for this pizza",cuts)
 
         return pizza_id, center, first_cut_angle
 
