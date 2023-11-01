@@ -247,5 +247,59 @@ class Player:
         Returns:
             Tuple[int, center, first cut angle]: Return the pizza id you choose, the center of the cut in format [x_coord, y_coord] where both are in inches relative of pizza center of radius 6, the angle of the first cut in radians. 
         """
+        num_toppings = self.num_toppings
+
+        #print("Customer amount Value: ", customer_amounts)
+        customer_1_preference = customer_amounts[0]
+        customer_2_preference = customer_amounts[1]
+
         pizza_id = remaining_pizza_ids[0]
-        return  remaining_pizza_ids[0], [0,0], np.pi/8
+        random_center = self.generate_values()
+        first_cut_angle = 45*np.pi/180
+        center = random.choice(random_center)
+        print(first_cut_angle)
+        
+        cuts = []
+        for i in range(1, 9):
+            angle = i * 45
+            x, y = self.calculate_cut_intersection(6, angle, center )
+            cuts.append((x, y))
+
+        # Print the coordinates of the intersections.
+        print("The set of cuts for this pizza",cuts)
+
+        return pizza_id, center, first_cut_angle
+
+    def generate_values(self):
+        # Creates a set of coordinates for radius values 1 through 3
+        result = []
+        for R in range(1, 4):
+            result.append([R, 0])
+            result.append([R / 2, -R / 2])
+            result.append([0, -R])
+            result.append([-R / 2, -R / 2])
+            result.append([-R, 0])
+            result.append([-R / 2, R / 2])
+            result.append([0, R])
+            result.append([R / 2, R / 2])
+        return result
+    
+    def calculate_cut_intersection(self, pizza_radius, angle, center):
+        """Calculates the coordinate of the cut intersection.
+
+        Args:
+            pizza_radius: The radius of the pizza.
+            angle: The angle of the cut in the 0-45 degree range.
+            center: The center of the pizza.
+        Returns:
+            A tuple of (x, y) coordinates of the cut intersection.
+        """
+
+        # Convert the angle to radians.
+        angle_in_radians = math.radians(angle)
+
+        # Calculate the x and y coordinates of the cut intersection.
+        x = pizza_radius * math.cos(angle_in_radians) + center[0]
+        y = pizza_radius * math.sin(angle_in_radians) + center[1]
+
+        return round(x, 2), round(y, 2)
