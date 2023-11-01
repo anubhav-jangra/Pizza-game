@@ -9,7 +9,12 @@ class Player:
         """Initialise the player"""
         self.rng = rng
         self.num_toppings = num_toppings
-        print("This is team 2.")
+        self.uniform_ = 0
+        self.topping_1 = 0
+        self.topping_2 = 0
+        self.topping_3 = 0
+        self.topping_4 = 0
+        #print("This is team 2.")
 
     def customer_gen(self, num_cust, rng = None):
         
@@ -39,13 +44,16 @@ class Player:
             for i in range(num_cust):
                 preferences_1 = rng.random((self.num_toppings,))
                 preferences_1 = 12*preferences_1/np.sum(preferences_1)
+                #print("These are the preferences_1 ", preferences_1)
                 preferences_2 = rng.random((self.num_toppings,))
                 preferences_2 = 12*preferences_2/np.sum(preferences_2)
+                #print("These are the preferences_2 ", preferences_2)
                 preferences = [preferences_1, preferences_2]
                 equal_prob = rng.random()
                 if equal_prob <= 0.0:       #change this if you want toppings to show up
                     preferences = (np.ones((2,self.num_toppings))*12/self.num_toppings).tolist()
                 preferences_total.append(preferences) 
+        #print("These are the preferences #2 ", preferences_total)
         return preferences_total
 
         
@@ -62,25 +70,140 @@ class Player:
         Returns:
             pizzas(list) : List of size [10,24,3], where 10 is the pizza id, 24 is the topping id, innermost list of size 3 is [x coordinate of topping center, y coordinate of topping center, topping number of topping(1/2/3/4) (Note that it starts from 1, not 0)]
         """
+        #uniform = 0
+        count=0
+        three_topping_tracker = 0
+        four_topping_tracker = 0
+        for pair in preferences:
+            for array in pair:
+                self.uniform_ = self.isUniform(array)
+                #print("Is it uniform", self.uniform_, self.isUniform(array))
+                count+=1
+                #print("this is the array we are dealing with", array, " #", count)
+                if self.uniform_==1:
+                    break
+                else:
+                   #print("TOP 1", array[0], 12/len(array))
+                    if array[0] > 12/len(array):     
+                        self.topping_1+=1
+                    if array[1] > 12/len(array):
+                        self.topping_2+=1
+                    if len(array) > 2:
+                        if array[2] > 12/len(array):
+                            self.topping_3+=1
+                        if len(array) > 3:
+                            if array[3] > 12/len(array):
+                                self.topping_4+=1
+                
+
+        #print("these are the topping stats", self.uniform_, self.topping_1, self.topping_2, self.topping_3, self.topping_4)
         
         x_coords = [np.sin(np.pi/2)]
         pizzas = np.zeros((10, 24, 3))
+        type_of_topping = 0
         for j in range(constants.number_of_initial_pizzas):
             pizza_indiv = np.zeros((24,3))
             i = 0
+            first_dist = 0
             while i<24:
-                angle = self.rng.random()*2*np.pi
-                dist = self.rng.random()*6
-                x = dist*np.cos(angle)
-                y = dist*np.sin(angle)
+                
+                if self.num_toppings == 2:
+                    first_dist = 3
+                elif self.num_toppings == 3:
+                    first_dist = 3
+                else:
+                    first_dist = 3 
+                #print("This is the distance: ", dist)
+                
+                angle = i/24*2*np.pi
+               # print("This is the angle: ", angle)
+
+
+                if self.num_toppings == 2: 
+                    x = first_dist*np.cos(angle)
+                    y = first_dist*np.sin(angle)
+                    
+                    #print("this is x and y", x , y)
+                    if angle < np.pi:
+                        type_of_topping = 1
+                    else:
+                        type_of_topping = 2
+                
+                if self.num_toppings == 3:
+                    x = first_dist*np.cos(angle)
+                    y = first_dist*np.sin(angle)
+                    
+                    #print("this is x and y", x , y)
+                    if angle < (2/3*(np.pi)):
+                        type_of_topping = 1
+                    elif angle >= (2/3*(np.pi)) and angle < (4/3*(np.pi)):
+                        type_of_topping = 2
+                    else: 
+                        type_of_topping = 3
+
+
+                if self.num_toppings == 4:
+                    x = first_dist*np.cos(angle)
+                    y = first_dist*np.sin(angle)
+                    
+                    #print("this is x and y", x , y)
+                    if angle < (2/4*(np.pi)):
+                        type_of_topping = 1
+                    elif angle >= (2/4*(np.pi)) and angle < ((np.pi)):
+                        type_of_topping = 2
+                    elif angle >= ((np.pi)) and angle < (6/4*(np.pi)):
+                        type_of_topping = 3
+                    else: 
+                        type_of_topping = 4
+
+                
+
+
+                    # three_topping_tracker+=1
+                    # angle = i/16*2*np.pi
+                    # x = first_dist*np.cos(angle)
+                    # y = first_dist*np.sin(angle)
+                    # print("This is the x, y: ", x, y)
+
+                    # if angle < np.pi and three_topping_tracker<17:
+                    #     type_of_topping = 1
+                    #     print("Getting in: ", x, y)
+                    # elif angle >= np.pi and three_topping_tracker<17:
+                    #     type_of_topping = 2
+                    #     print("Making the circle ", x, y)
+                    # else:
+                    #     first_dist = 4.5
+                    #     angle = ((i%8)+1)/8*2*np.pi
+                    #     # if three_topping_tracker<21:
+                    #     print("three_topping_tracker: ", three_topping_tracker)
+                    #     x = first_dist*np.cos(angle)
+                    #     y = first_dist*np.sin(angle)
+                    #     type_of_topping = 3
+                    #     # else: 
+                        #     x = -first_dist*(((three_topping_tracker%4+1)/2)*np.pi)
+                        #     y = -(first_dist*(((three_topping_tracker%4+1)/2)*np.pi))
+
+                    
+
                 clash_exists = pizza_calculations.clash_exists(x, y, pizza_indiv, i)
                 if not clash_exists:
-                    pizza_indiv[i] = [x, y, i%self.num_toppings + 1]
+                    pizza_indiv[i] = [x, y, type_of_topping]
                     i = i+1
-            pizza_indiv = np.array(pizza_indiv)
-            pizzas[j] = pizza_indiv
+                pizza_indiv = np.array(pizza_indiv)
+                pizzas[j] = pizza_indiv
+        # print("These are the pizzas ", list(pizzas))
         return list(pizzas)
     
+
+    def isUniform(self, array):
+        for index in range(len(array)-1):
+            if array[index+1]==array[index]:
+                self.uniform_+=1
+        
+        if self.uniform_== len(array)-1:
+            return 1
+        else:
+            return 0
 
 
 
