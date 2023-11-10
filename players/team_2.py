@@ -419,7 +419,7 @@ class Player:
                 max_ = i
         return max_
 
-    #def play(self, cards: list[str], constraints: list[str], state: list[str], territory: list[int]) -> Tuple[int, str]:
+   #def play(self, cards: list[str], constraints: list[str], state: list[str], territory: list[int]) -> Tuple[int, str]:
     def choose_and_cut(self, pizzas, remaining_pizza_ids, customer_amounts):
         """Function which based n current game state returns the distance and angle, the shot must be played
 
@@ -438,53 +438,64 @@ class Player:
         customer_2_preference = customer_amounts[1]
 
         pizza_id = remaining_pizza_ids[0]
-        _center = [1, 0]
-        center = [self.x + _center[0], self.y + _center[1]]
-        random_center = self.generate_values()
-        first_cut_angle = random.choice(random_center)
-        print(first_cut_angle)
-        
-        cuts = []
-        for i in np.linspace(0, 1, 11):
-            angle = i * 35
-            x, y = self.calculate_cut_intersection(6, angle, center)
-            print("(x, y)", (x, y))
-            curr_cut = (x, y)
-
-            print("random run")
-            random_pref, temp = self.calculator.ratio_calculator(pizzas[pizza_id], [x, y, self.rng.random()*2*np.pi], num_toppings, self.multiplier, self.x, self.y)
-            print("our run")
-            obtained_pref, slice_areas_toppings = self.calculator.ratio_calculator(pizzas[pizza_id], [center[0], center[1], angle], num_toppings, self.multiplier, self.x, self.y)
-            obtained_pref = np.array(obtained_pref)
-            slice_areas = self.calculator.slice_area_calculator([center[0], center[1], angle], self.multiplier, self.x, self.y)
-            # Try to fix if theta is 0
-            random_pref = np.array(random_pref)
-            required_pref = np.array(customer_amounts)
-            uniform_pref = np.ones((2, num_toppings))*(12/num_toppings)
-            print('random_pref', random_pref)
-            print('required_pref', required_pref)
-            print('uniform_pref', uniform_pref)
-            b = np.round(np.absolute(required_pref - uniform_pref), 3)
-            c = np.round(np.absolute(obtained_pref - required_pref), 3)
-            s = b - c
-            u = np.round(np.absolute(random_pref - uniform_pref), 3)
-            print("b:", b)
-            print("c:", c)
-            print("u:", u)
-            s = np.sum([np.sum(s[0]), np.sum(s[1])])
-            print("s:", s)
-            cuts.append((angle, s))
+        listOfCenters = self.generate_values()
 
         max_s = -10000
+        best_center = None
         best_angle = None
-        for inst in cuts:
-            if inst[-1] > max_s:
-                best_angle = inst[0]
+        b = c = s = u = None
+    
+        for _center in listOfCenters:
+            center = [self.x + _center[0], self.y + _center[1]]
+        
+            cuts = []
+            for i in np.linspace(0, 1, 11):
+                angle = i * 45*np.pi/180
+                x, y = self.calculate_cut_intersection(6, angle, center)
+
+                #print("random run")
+                random_pref, temp = self.calculator.ratio_calculator(pizzas[pizza_id], [x, y, self.rng.random()*2*np.pi], num_toppings, self.multiplier, self.x, self.y)
+                #print("our run")
+                obtained_pref, slice_areas_toppings = self.calculator.ratio_calculator(pizzas[pizza_id], [center[0], center[1], angle], num_toppings, self.multiplier, self.x, self.y)
+                obtained_pref = np.array(obtained_pref)
+                slice_areas = self.calculator.slice_area_calculator([center[0], center[1], angle], self.multiplier, self.x, self.y)
+                # Try to fix if theta is 0
+                random_pref = np.array(random_pref)
+                required_pref = np.array(customer_amounts)
+                uniform_pref = np.ones((2, num_toppings))*(12/num_toppings)
+                #print('random_pref', random_pref)
+                #print('required_pref', required_pref)
+                #print('uniform_pref', uniform_pref)
+                b = np.round(np.absolute(required_pref - uniform_pref), 3)
+                c = np.round(np.absolute(obtained_pref - required_pref), 3)
+                s = b - c
+                u = np.round(np.absolute(random_pref - uniform_pref), 3)
+                #print("b:", b)
+                #print("c:", c)
+                #print("u:", u)
+                s = np.sum([np.sum(s[0]), np.sum(s[1])])
+                #print("s:", s)
+                cuts.append((angle, s))
+                
+
+            for inst in cuts:
+                if inst[-1] > max_s:
+                    max_s = inst[-1]
+                    best_center = _center
+                    best_angle = max(cuts, key=lambda x: x[-1])[0]
+
 
         # Print the coordinates of the intersections.
         print("The set of cuts for this pizza", cuts)
+        print("Best Center" , best_center)
+        print("Best_angle", best_angle)
+        print("b:", b)
+        print("c:", c)
+        print("u:", u)
+        print("s:", s)
+        print("max_s:", max_s)
 
-        return pizza_id, _center, best_angle
+        return pizza_id, best_center, best_angle
 
     def generate_values(self):
         # Creates a set of coordinates for radius values 1 through 3
