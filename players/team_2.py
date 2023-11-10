@@ -134,7 +134,7 @@ class Player:
                     sum_[index] = sum_[index]/len(sum_)
 
             self.counter_+=1
-            #print(sum_)
+            print("this is the sum ", sum_)
 
             return sum_
 
@@ -155,32 +155,7 @@ class Player:
         count=0
         three_topping_tracker = 0
         four_topping_tracker = 0
-        # for pair in preferences:
-        #     for array in pair:
-        #         self.uniform_ = self.isUniform(array)
-        #         #print("Is it uniform", self.uniform_, self.isUniform(array))
-        #         count+=1
-        #         #print("this is the array we are dealing with", array, " #", count)
-        #         if self.uniform_==1:
-        #             break
-        #         else:
-        #            #print("TOP 1", array[0], 12/len(array))
-        #             if array[0] > 12/len(array):     
-        #                 self.topping_1+=1
-        #             if array[1] > 12/len(array):
-        #                 self.topping_2+=1
-        #             if len(array) > 2:
-        #                 if array[2] > 12/len(array):
-        #                     self.topping_3+=1
-        #                 if len(array) > 3:
-        #                     if array[3] > 12/len(array):
-        #                         self.topping_4+=1
-
-        
-                
-
-        #print("these are the topping stats", self.uniform_, self.topping_1, self.topping_2, self.topping_3, self.topping_4)
-        
+  
         x_coords = [np.sin(np.pi/2)]
         pizzas = np.zeros((10, 24, 3))
         type_of_topping = 0
@@ -196,12 +171,14 @@ class Player:
             pizza_indiv = np.zeros((24,3))
             i = 0
             first_dist = 0
+            second_dist = 0
             while i<24:
                 
                 if self.num_toppings == 2:
                     first_dist = 3
                 elif self.num_toppings == 3:
                     first_dist = 3
+                    second_dist = 4.5
                 else:
                     first_dist = 3 
                 #print("This is the distance: ", dist)
@@ -221,27 +198,45 @@ class Player:
                         type_of_topping = 2
                 
                 if self.num_toppings == 3:
-                    x = first_dist*np.cos(angle)
-                    y = first_dist*np.sin(angle)
-                    
-                    #print("this is x and y", x , y)
-                    if angle < (2/3*(np.pi)):
-                        type_of_topping = 1
-                    elif angle >= (2/3*(np.pi)) and angle < (4/3*(np.pi)):
-                        type_of_topping = 2
+                    if i <= 15:
+                        angle = i/16*2*np.pi
+                        x = first_dist*np.cos(angle)
+                        y = first_dist*np.sin(angle)
+                        if angle < np.pi:
+                            index_ = avg_list.index(self.largest_num(avg_list))+1
+                            type_of_topping = index_
+                        else:
+                            if i == 8:
+                                remove_ = avg_list.index(self.largest_num(avg_list))
+                                avg_list[remove_] = -100
+                            index_ = avg_list.index(self.largest_num(avg_list))+1
+                            type_of_topping = index_                            
+                # if i < 16:  # Toppings 1 and 2
+                #         angle = 2 * np.pi * i / 16
+                #         x = inner_circle_radius * np.cos(angle)
+                #         y = inner_circle_radius * np.sin(angle)
+                #         topping_type = 1 if i < 8 else 2
+                #     else:  # Topping 3
+                #         angle = 2 * np.pi * (i - 8) / 16 + np.pi/8
+                #         x = outer_circle_radius * np.cos(angle)
+                #         y = outer_circle_radius * np.sin(angle)
+                #         topping_type = 3                    
+                #     #print("this is x and y", x , y)
                     else: 
-                        type_of_topping = 3
+                        angle = 2 * np.pi * (i - 8) / 16
+                        x = second_dist*np.cos(angle)
+                        y = second_dist*np.sin(angle)
+                        if i == 16:
+                            remove_ = avg_list.index(self.largest_num(avg_list))
+                            avg_list[remove_] = -100
+                        index_ = avg_list.index(self.largest_num(avg_list))+1
+                        type_of_topping = index_
 
 
                 if self.num_toppings == 4:
                     x = first_dist*np.cos(angle)
                     y = first_dist*np.sin(angle)
-                    #print("this is j: ", j)
-                
-
-                    
-
-                    #print("this is x and y", x , y)
+                  
                     if angle < (2/4*(np.pi)):
                         index_ = avg_list.index(self.largest_num(avg_list))+1
                         type_of_topping = index_
@@ -443,7 +438,7 @@ class Player:
         customer_2_preference = customer_amounts[1]
 
         pizza_id = remaining_pizza_ids[0]
-        _center = [1, 1]
+        _center = [1, 0]
         center = [self.x + _center[0], self.y + _center[1]]
         random_center = self.generate_values()
         first_cut_angle = random.choice(random_center)
@@ -451,7 +446,7 @@ class Player:
         
         cuts = []
         for i in np.linspace(0, 1, 11):
-            angle = i * 45
+            angle = i * 35
             x, y = self.calculate_cut_intersection(6, angle, center)
             print("(x, y)", (x, y))
             curr_cut = (x, y)
